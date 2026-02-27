@@ -1,69 +1,906 @@
-warp-common: &warp-common
-  type: wireguard
-  ip: 172.16.0.2
-  ipv6: 2606:4700:110:8bc8:da7a:d650:6c62:6d91
-  private-key: QKkyVBzSZNccOAaQF/h+SCrGWau1HMaWuxE43uvozmU=
-  public-key: bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=
-  allowed-ips: ['0.0.0.0/0']
-  reserved: [108, 154, 132]
-  udp: true
-  mtu: 1280
-  remote-dns-resolve: true
-  dns: [1.1.1.1, 1.0.0.1, 2606:4700:4700::1111, 2606:4700:4700::1001]
-  server: 162.159.192.1
-  port: 4500
-   
+global-client-fingerprint: chrome
+port: 7890
+socks-port: 7891
+redir-port: 7892
+mixed-port: 7893
+tproxy-port: 7894
+allow-lan: true
+tcp-concurrent: true
+enable-process: true
+find-process-mode: always
+ipv6: true
+log-level: debug
+geo-auto-update: true
+geo-update-interval: 168
+secret: ''
+bind-address: '*'
+unified-delay: false
+disable-keep-alive: false
+keep-alive-idle: 30
+keep-alive-interval: 30
+profile:
+  store-selected: true
+  store-fake-ip: true
+dns:
+  enable: true
+  ipv6: true
+  respect-rules: false
+  prefer-h3: true
+  cache-algorithm: arc
+  use-system-hosts: true
+  use-host: true
+  listen: 0.0.0.0:53
+  enhanced-mode: fake-ip
+  fake-ip-filter-mode: blacklist
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - '*.lan'
+    - '*.localdomain'
+    - '*.invalid'
+    - '*.localhost'
+    - '*.test'
+    - '*.local'
+    - '*.home.arpa'
+    - 'time.*.com'
+    - 'ntp.*.com'
+    - '*.ir'
+ 
+  default-nameserver: 
+    - 8.8.8.8 
+    - 8.8.4.4 
+    - 1.0.0.1 
+    - 1.1.1.1 
+    - 9.9.9.9 
+    - 9.9.9.11 
+    - 9.9.9.10 
+    - 94.140.14.15 
+    - 94.140.15.15 
+    - 223.5.5.5 
+    - 77.88.8.8
+  nameserver:
+    - 'https://sky.rethinkdns.com/1:-J8AGH8C7_2-___f3_vZ3f_z-f9KagBI'
+    - 'tls://1-7cpqagd7alx73px777p5766z3x77h6p7jjvaasa.max.rethinkdns.com'
+  direct-nameserver:
+    - '78.157.42.100'
+    - '78.157.42.101' 
+  proxy-server-nameserver: 
+    - '2606:4700:4700::1111' 
+    - '2606:4700:4700::1001' 
+    - '2001:4860:4860::8888' 
+    - '2001:4860:4860::8844' 
+    - '1.1.1.1' 
+    - '8.8.8.8' 
+    - '8.8.4.4' 
+    - '9.9.9.9' 
+    - '223.5.5.5' 
+    - '77.88.8.8' 
+    - '2400:3200::1' 
+    - '2a02:6b8::feed:0ff' 
+    - '2620:fe::fe' 
+
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: false
+  sniff:
+    HTTP:
+      ports: [80, 8080, 8880, 2052, 2082, 2086, 2095]
+    TLS:
+      ports: [443, 8443, 2053, 2083, 2087, 2096]
+
+tun:
+  enable: true
+  stack: mixed
+  auto-route: true
+  auto-detect-interface: true
+  auto-redir: true
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+
+rule-providers:
+  category_public_tracker:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/generated/category-public-tracker.yaml
+    interval: 86400
+    path: ./ruleset/category_public_tracker.yaml
+  iran_ads:
+    type: http
+    behavior: domain
+    url: https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/clash_rules_ads.yaml
+    interval: 86400
+    path: ./ruleset/iran_ads.yaml
+  PersianBlocker:
+    type: http
+    behavior: domain
+    url: "https://github.com/MasterKia/iran-hosted-domains/releases/latest/download/clash_rules_ads.yaml"
+    path: ./ruleset/PersianBlocker.yaml
+    interval: 86400
+  youtube:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/generated/youtube.yaml
+    interval: 86400
+    path: ./ruleset/youtube.yaml
+  telegram:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/generated/telegram.yaml
+    interval: 86400
+    path: ./ruleset/telegram.yaml
+  twitch:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/generated/twitch.yaml
+    interval: 86400
+    path: ./ruleset/twitch.yaml
+  censor:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/clash_rules/main/censor.yaml
+    interval: 86400
+    path: ./ruleset/censor.yaml
+  local_ips:
+    type: http
+    behavior: ipcidr
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/generated/local-ips.yaml
+    interval: 86400
+    path: ./ruleset/local_ips.yaml
+  private:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/generated/private.yaml
+    interval: 86400
+    path: ./ruleset/private.yaml
+  category_ir:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/generated/category-ir.yaml
+    interval: 86400
+    path: ./ruleset/category_ir.yaml
+  iran:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/clash_rules/main/iran.yaml
+    interval: 86400
+    path: ./ruleset/iran.yaml
+  steam:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/clash_rules/main/steam.yaml
+    interval: 86400
+    path: ./ruleset/steam.yaml
+  game:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/clash_rules/refs/heads/main/game.yaml
+    interval: 86400
+    path: ./ruleset/game.yaml
+  category-games:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/category-games.yaml
+    interval: 86400
+    path: ./ruleset/category-games.yaml
+  ir:
+    type: http
+    format: yaml
+    behavior: domain
+    url: "https://github.com/chocolate4u/Iran-clash-rules/releases/latest/download/ir.yaml"
+    path: ./ruleset/ir.yaml
+    interval: 86400
+  apps:
+    type: http
+    format: yaml
+    behavior: classical
+    url: "https://github.com/chocolate4u/Iran-clash-rules/releases/latest/download/apps.yaml"
+    path: ./ruleset/apps.yaml
+    interval: 86400
+  ircidr:
+    type: http
+    format: yaml
+    behavior: ipcidr
+    url: "https://github.com/chocolate4u/Iran-clash-rules/releases/latest/download/ircidr.yaml"
+    path: ./ruleset/ircidr.yaml
+    interval: 86400
+  irasn:
+    type: http
+    format: yaml
+    behavior: classical
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/release/irasn.yaml"
+    path: ./ruleset/irasn.yaml
+    interval: 86400
+  arvancloud:
+    type: http
+    format: yaml
+    behavior: ipcidr
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/release/arvancloud.yaml"
+    path: ./ruleset/arvancloud.yaml
+    interval: 86400
+  derakcloud:
+    type: http
+    format: yaml
+    behavior: ipcidr
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/release/derakcloud.yaml"
+    path: ./ruleset/derakcloud.yaml
+    interval: 86400
+  iranserver:
+    type: http
+    format: yaml
+    behavior: ipcidr
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/release/iranserver.yaml"
+    path: ./ruleset/iranserver.yaml
+    interval: 86400
+  parspack:
+    type: http
+    format: yaml
+    behavior: ipcidr
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/release/parspack.yaml"
+    path: ./ruleset/parspack.yaml
+    interval: 86400
+  malware:
+    type: http
+    format: yaml
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/release/malware.yaml"
+    path: ./ruleset/malware.yaml
+    interval: 86400
+  phishing:
+    type: http
+    format: yaml
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/release/phishing.yaml"
+    path: ./ruleset/phishing.yaml
+    interval: 86400
+  cryptominers:
+    type: http
+    format: yaml
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/release/cryptominers.yaml"
+    path: ./ruleset/cryptominers.yaml
+    interval: 86400
+  ads:
+    type: http
+    format: yaml
+    behavior: domain
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/releases/latest/download/category-ads-all.yaml"
+    path: ./ruleset/ads.yaml
+    interval: 86400
+  DownloadManagers:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/clash_rules/refs/heads/main/DownloadManagers.yaml
+    interval: 86400
+    path: ./ruleset/DownloadManagers.yaml
+  BanProgramAD:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/BanProgramAD.yaml
+    interval: 86400
+    path: ./ruleset/BanProgramAD.yaml
+  BanAD:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/BanAD.yaml
+    interval: 86400
+    path: ./ruleset/BanAD.yaml
+  PrivateTracker:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/PrivateTracker.yaml
+    interval: 86400
+    path: ./ruleset/PrivateTracker.yaml
+  BanEasyList:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/BanEasyList.yaml
+    interval: 86400
+    path: ./ruleset/BanEasyList.yaml
+  Download:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/Download.yaml
+    interval: 86400
+    path: ./ruleset/Download.yaml
+  GameDownload:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/GameDownload.yaml
+    interval: 86400
+    path: ./ruleset/GameDownload.yaml
+  SteamRegionCheck:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/SteamRegionCheck.yaml
+    interval: 86400
+    path: ./ruleset/SteamRegionCheck.yaml
+  Xbox:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/Xbox.yaml
+    interval: 86400
+    path: ./ruleset/Xbox.yaml
+  YouTubeMusic:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/YouTubeMusic.yaml
+    interval: 86400
+    path: ./ruleset/YouTubeMusic.yaml
+  YouTube:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/YouTube.yaml
+    interval: 86400
+    path: ./ruleset/YouTube.yaml
+  Ponzi:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/Ponzi.yaml
+    interval: 86400
+    path: ./ruleset/Ponzi.yaml
+  warninglist:
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/warning-list.yaml
+    interval: 86400
+    path: ./ruleset/warninglist.yaml
+  google:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/google.yaml
+    interval: 86400
+    path: ./ruleset/google.yaml
+  google-play:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/google-play.yaml
+    interval: 86400
+    path: ./ruleset/google-play.yaml
+  xiaomi-ads:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/xiaomi-ads.yaml
+    interval: 86400
+    path: ./ruleset/xiaomi-ads.yaml
+  xiaomi_block_list:
+    type: http
+    format: yaml
+    behavior: domain
+    url: "https://raw.githubusercontent.com/10ium/clash_rules/refs/heads/main/xiaomi_block_list.yaml"
+    path: ./ruleset/xiaomi_block_list.yaml
+    interval: 86400
+  xiaomi_white_list:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/10ium/clash_rules/refs/heads/main/xiaomi_white_list.yaml"
+    path: ./ruleset/xiaomi_white_list.yaml
+    interval: 86400
+  cloudflare:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/cloudflare.yaml
+    interval: 86400
+    path: ./ruleset/cloudflare.yaml
+  github:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/github.yaml
+    interval: 86400
+    path: ./ruleset/xgithub.yaml
+  whatsapp:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/generated/whatsapp.yaml
+    interval: 86400
+    path: ./ruleset/whatsapp.yaml
+  LiteAds:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/10ium/clash_rules/refs/heads/main/LiteAds.yaml"
+    path: ./ruleset/LiteAds.yaml
+    interval: 86400
+  discord:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/10ium/clash_rules/refs/heads/main/discord.yaml"
+    path: ./ruleset/discord.yaml
+    interval: 86400
+  instagram:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/instagram.yaml
+    interval: 86400
+    path: ./ruleset/instagram.yaml
+  category-ai:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/category-ai-!cn.yaml
+    interval: 86400
+    path: ./ruleset/category-ai.yaml
+  stremio:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/10ium/clash_rules/refs/heads/main/stremio.yaml"
+    path: ./ruleset/stremio.yaml
+    interval: 86400
+  windows:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/10ium/clash_rules/refs/heads/main/windows.yaml"
+    path: ./ruleset/windows.yaml
+    interval: 86400
+  Chotwitter:
+    type: http
+    format: yaml
+    behavior: ipcidr
+    url: "https://raw.githubusercontent.com/Chocolate4U/Iran-clash-rules/release/twitter.yaml"
+    path: ./ruleset/Chotwitter.yaml
+    interval: 86400
+  mihTwitter:
+    type: http
+    behavior: classical
+    url: "https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/Twitter.yaml"
+    path: ./ruleset/mihTwitter.yaml
+    interval: 86400
+  Domtwitter:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/twitter.yaml
+    interval: 86400
+    path: ./ruleset/Domtwitter.yaml
+  spotifyads:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/spotify-ads.yaml
+    interval: 86400
+    path: ./ruleset/spotifyads.yaml
+  DomainSpotify:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/V2rayDomains2Clash/refs/heads/generated/spotify.yaml
+    interval: 86400
+    path: ./ruleset/DomainSpotify.yaml
+  mihspotify:
+    type: http
+    behavior: domain
+    url: https://raw.githubusercontent.com/10ium/mihomo_rule/refs/heads/main/list/Spotify.yaml
+    interval: 86400
+    path: ./ruleset/mihSpotify.yaml
+
 proxies:
-- name: "AWG 1.5 (1 Вариант)"
-  <<: *warp-common
-  amnezia-wg-option:
-   jc: 120
-   jmin: 23
-   jmax: 911
-   s1: 0
-   s2: 0
-   h1: 1
-   h2: 2
-   h4: 3
-   h3: 4  
-   i1: <b 0xce000000010897a297ecc34cd6dd000044d0ec2e2e1ea2991f467ace4222129b5a098823784694b4897b9986ae0b7280135fa85e196d9ad980b150122129ce2a9379531b0fd3e871ca5fdb883c369832f730e272d7b8b74f393f9f0fa43f11e510ecb2219a52984410c204cf875585340c62238e14ad04dff382f2c200e0ee22fe743b9c6b8b043121c5710ec289f471c91ee414fca8b8be8419ae8ce7ffc53837f6ade262891895f3f4cecd31bc93ac5599e18e4f01b472362b8056c3172b513051f8322d1062997ef4a383b01706598d08d48c221d30e74c7ce000cdad36b706b1bf9b0607c32ec4b3203a4ee21ab64df336212b9758280803fcab14933b0e7ee1e04a7becce3e2633f4852585c567894a5f9efe9706a151b615856647e8b7dba69ab357b3982f554549bef9256111b2d67afde0b496f16962d4957ff654232aa9e845b61463908309cfd9de0a6abf5f425f577d7e5f6440652aa8da5f73588e82e9470f3b21b27b28c649506ae1a7f5f15b876f56abc4615f49911549b9bb39dd804fde182bd2dcec0c33bad9b138ca07d4a4a1650a2c2686acea05727e2a78962a840ae428f55627516e73c83dd8893b02358e81b524b4d99fda6df52b3a8d7a5291326e7ac9d773c5b43b8444554ef5aea104a738ed650aa979674bbed38da58ac29d87c29d387d80b526065baeb073ce65f075ccb56e47533aef357dceaa8293a523c5f6f790be90e4731123d3c6152a70576e90b4ab5bc5ead01576c68ab633ff7d36dcde2a0b2c68897e1acfc4d6483aaaeb635dd63c96b2b6a7a2bfe042f6aed82e5363aa850aace12ee3b1a93f30d8ab9537df483152a5527faca21efc9981b304f11fc95336f5b9637b174c5a0659e2b22e159a9fed4b8e93047371175b1d6d9cc8ab745f3b2281537d1c75fb9451871864efa5d184c38c185fd203de206751b92620f7c369e031d2041e152040920ac2c5ab5340bfc9d0561176abf10a147287ea90758575ac6a9f5ac9f390d0d5b23ee12af583383d994e22c0cf42383834bcd3ada1b3825a0664d8f3fb678261d57601ddf94a8a68a7c273a18c08aa99c7ad8c6c42eab67718843597ec9930457359dfdfbce024afc2dcf9348579a57d8d3490b2fa99f278f1c37d87dad9b221acd575192ffae1784f8e60ec7cee4068b6b988f0433d96d6a1b1865f4e155e9fe020279f434f3bf1bd117b717b92f6cd1cc9bea7d45978bcc3f24bda631a36910110a6ec06da35f8966c9279d130347594f13e9e07514fa370754d1424c0a1545c5070ef9fb2acd14233e8a50bfc5978b5bdf8bc1714731f798d21e2004117c61f2989dd44f0cf027b27d4019e81ed4b5c31db347c4a3a4d85048d7093cf16753d7b0d15e078f5c7a5205dc2f87e330a1f716738dce1c6180e9d02869b5546f1c4d2748f8c90d9693cba4e0079297d22fd61402dea32ff0eb69ebd65a5d0b687d87e3a8b2c42b648aa723c7c7daf37abcc4bb85caea2ee8f55bec20e913b3324ab8f5c3304f820d42ad1b9f2ffc1a3af9927136b4419e1e579ab4c2ae3c776d293d397d575df181e6cae0a4ada5d67ecea171cca3288d57c7bbdaee3befe745fb7d634f70386d873b90c4d6c6596bb65af68f9e5121e67ebf0d89d3c909ceedfb32ce9575a7758ff080724e1ab5d5f43074ecb53a479af21ed03d7b6899c36631c0166f9d47e5e1d4528a5d3d3f744029c4b1c190cbfbad06f5f83f7ad0429fa9a2719c56ffe3783460e166de2d8>
-- name: "AWG 1.5 (2 Вариант)"
-  <<: *warp-common
-  amnezia-wg-option:
-   jc: 120
-   jmin: 23
-   jmax: 911
-   s1: 0
-   s2: 0
-   h1: 1
-   h2: 2
-   h4: 3
-   h3: 4
-   i1: <b 0xc7000000010809a1ed4edbbe7615000044d017a61a0d774f04290f119e701ef0035df2b0ed571b0b575e6a07246b856eb6ec036fef07f1e07b861251ad737abeb67e64be714c1dcd865312b1b6c35c089c997aeb5c18f808696fe97289513945d84ca846467603e94e44224877f2c1d3261e4ac18740be4bd064369c94fc08978d99b54bf615250998639010c1284248e1d73004b81fcb20b559d8a17eced7eab3964b5b88ca7a3b8579fc8c1c934189e77143b4ac434138114b1048651b56545b87acbef0952763538f3ddeb37cfc6d58b4881c3b719d7ff78f6ee1324a2914a32381c05a64c700466d280be007253bb030d179c4f1b3dc221e1974e2ee6d6e2b9e8d709159b5ef22e1783dbba845c20ca1c83b066c73835920ad70b806df0aee0351e3fc9ab1e42e8b2a30fe235ff0612eee19744949cecee0463b76514ad90c1f7ceaa557c18586ab561d49482e73c85d0143785da14a441bf82f78783b61cccd44aecb1947516e79b5ca5a6b3a8aed6040fae0eeabdc55a88dc19ade832d99fca90c7a629cacc07192d7e47e3c6a271b95b0ea3392562a06a1cab79f40ea92916ebee197b7b5f14b251824e1ed20ff2ca80b1f03a43e45157589bc61b978e97851025b3b7ccc17d291e1cb60fe48a5c26829dce11dd23c2e73265a9ebf8617c985e4fee4681e863f990061f4dea465a7d2524bd0edcf4b48d4b8f25fc359b15babd2637284a4774077dca60091f1a781cfee1bef9713dd5943a579d7470bc5970542fbb27fdf77880a8d8751b1f642c7a3f019a05ab94bf63d3525ef34e9290b5c8d477f2714e6d6e3e4d35c1983f5e16fda57fcdf071b513f8f088dbe8d5a97577d17a5383a496c3f313adfdd47c962bbaebd6aa13b46439eb742622c29ca067db0ec1853064c3cbbffe0a215a19fce47d49703ed58ebbd89721172d256d1cf30188106fb2f863186511401fad54d087aa2fb3d1b85768db386bd7102e8060ac157bac011acdcdae2799b9aee1467c3424013455bd028fcaacdc3c77d28ea199967d617ea7d0d0815f3cc407934a76d1293dccba210d1709a13e5dd67c9ba47cd113f5bdd740358eff13164159fd09bc2f7ec6cfa64d9df7e2e2f88706b0ff3a92ccf6f078456cfe0bdd89292cfe2680badc1eac9f7d36efe8eb6912c7b164508d13e6c0911c15f73c233cbe4fc70ff2ade1e1be4bbb738e0939159e2078a9438f05b756a003371f4861481c38f1cdd2d7b06deb62869e9fe79a8abaa920646fa2e8fa28f0d80c136376c7b56046bae4c05c0cdf64efb8c47bbfc5a1a4c0b045061ef0d71618e0d206a1d7f245fd5c03191b152673ba8dff8e1b8de7c50234a93cba91e3888adb228cc02beded4b1c0946797d3ef02dec2edb6ad0ac21f89f4be364c317da7c22440e9f358d512203f4b7ab20388af68b8915d0152db2c8a0687bfaea870f7529bb92a22b35bd79bc6d490591406346ecd78342ee3563c4883a8251679691c2d4e963397e24653520795511b018915374c954bddb940a9d7a16d1c8bd798fc7dbfb0599a7074e13f87e14efa8d511bb2579ec029b1bda18fe971b30fbe19e986ff2686a69bf3f1bb929de93ae70345ebca998b11e0a2b41890cba628d8f6e7c4e94790735e5299b4ff07cd3080f7d53c9cbe1911d2cd5925b3213e033c272506a87886cf761a283a779564d3241e3c28f632e166b5d756e1786ce077614c4444e3f2aed5decb3613b925ea3e558c21d4faf8ba54edd0f3a5d4>
-- name: "AWG 1.5 (3 Вариант)"
-  <<: *warp-common
-  amnezia-wg-option:
-   jc: 120
-   jmin: 23
-   jmax: 911
-   s1: 0
-   s2: 0
-   h1: 1
-   h2: 2
-   h4: 3
-   h3: 4   
-   i1: <b 0x494e56495445207369703a626f624062696c6f78692e636f6d205349502f322e300d0a5669613a205349502f322e302f55445020706333332e61746c616e74612e636f6d3b6272616e63683d7a39684734624b3737366173646864730d0a4d61782d466f7277617264733a2037300d0a546f3a20426f62203c7369703a626f624062696c6f78692e636f6d3e0d0a46726f6d3a20416c696365203c7369703a616c6963654061746c616e74612e636f6d3e3b7461673d313932383330313737340d0a43616c6c2d49443a20613834623463373665363637313040706333332e61746c616e74612e636f6d0d0a435365713a2033313431353920494e564954450d0a436f6e746163743a203c7369703a616c69636540706333332e61746c616e74612e636f6d3e0d0a436f6e74656e742d547970653a206170706c69636174696f6e2f7364700d0a436f6e74656e742d4c656e6774683a20300d0a0d0a>
-   i2: <b 0x5349502f322e302031303020547279696e670d0a5669613a205349502f322e302f55445020706333332e61746c616e74612e636f6d3b6272616e63683d7a39684734624b3737366173646864730d0a546f3a20426f62203c7369703a626f624062696c6f78692e636f6d3e0d0a46726f6d3a20416c696365203c7369703a616c6963654061746c616e74612e636f6d3e3b7461673d313932383330313737340d0a43616c6c2d49443a20613834623463373665363637313040706333332e61746c616e74612e636f6d0d0a435365713a2033313431353920494e564954450d0a436f6e74656e742d4c656e6774683a20300d0a0d0a>
-   j1: <b 0xabcdef1234567890>
-   itime: 120
-  
+  - name: 馃彸锔� AWG 1.5 (1 袙邪褉懈邪薪褌)
+    type: wireguard
+    server: 162.159.192.1
+    port: 4500
+    ip: 172.16.0.2
+    private-key: 'QKkyVBzSZNccOAaQF/h+SCrGWau1HMaWuxE43uvozmU='
+    public-key: 'bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo='
+    allowed-ips:
+      - 0.0.0.0/0
+    udp: true
+    mtu: 1280
+    remote-dns-resolve: true
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+      - 2606:4700:4700::1111
+      - 2606:4700:4700::1001
+    amnezia-wg-option:
+      jc: 120
+      jmin: 23
+      jmax: 911
+      s1: 0
+      s2: 0
+      h1: 1
+      h2: 2
+      h4: 3
+      h3: 4
+      i1: <b 0xce000000010897a297ecc34cd6dd000044d0ec2e2e1ea2991f467ace4222129b5a098823784694b4897b9986ae0b7280135fa85e196d9ad980b150122129ce2a9379531b0fd3e871ca5fdb883c369832f730e272d7b8b74f393f9f0fa43f11e510ecb2219a52984410c204cf875585340c62238e14ad04dff382f2c200e0ee22fe743b9c6b8b043121c5710ec289f471c91ee414fca8b8be8419ae8ce7ffc53837f6ade262891895f3f4cecd31bc93ac5599e18e4f01b472362b8056c3172b513051f8322d1062997ef4a383b01706598d08d48c221d30e74c7ce000cdad36b706b1bf9b0607c32ec4b3203a4ee21ab64df336212b9758280803fcab14933b0e7ee1e04a7becce3e2633f4852585c567894a5f9efe9706a151b615856647e8b7dba69ab357b3982f554549bef9256111b2d67afde0b496f16962d4957ff654232aa9e845b61463908309cfd9de0a6abf5f425f577d7e5f6440652aa8da5f73588e82e9470f3b21b27b28c649506ae1a7f5f15b876f56abc4615f49911549b9bb39dd804fde182bd2dcec0c33bad9b138ca07d4a4a1650a2c2686acea05727e2a78962a840ae428f55627516e73c83dd8893b02358e81b524b4d99fda6df52b3a8d7a5291326e7ac9d773c5b43b8444554ef5aea104a738ed650aa979674bbed38da58ac29d87c29d387d80b526065baeb073ce65f075ccb56e47533aef357dceaa8293a523c5f6f790be90e4731123d3c6152a70576e90b4ab5bc5ead01576c68ab633ff7d36dcde2a0b2c68897e1acfc4d6483aaaeb635dd63c96b2b6a7a2bfe042f6aed82e5363aa850aace12ee3b1a93f30d8ab9537df483152a5527faca21efc9981b304f11fc95336f5b9637b174c5a0659e2b22e159a9fed4b8e93047371175b1d6d9cc8ab745f3b2281537d1c75fb9451871864efa5d184c38c185fd203de206751b92620f7c369e031d2041e152040920ac2c5ab5340bfc9d0561176abf10a147287ea90758575ac6a9f5ac9f390d0d5b23ee12af583383d994e22c0cf42383834bcd3ada1b3825a0664d8f3fb678261d57601ddf94a8a68a7c273a18c08aa99c7ad8c6c42eab67718843597ec9930457359dfdfbce024afc2dcf9348579a57d8d3490b2fa99f278f1c37d87dad9b221acd575192ffae1784f8e60ec7cee4068b6b988f0433d96d6a1b1865f4e155e9fe020279f434f3bf1bd117b717b92f6cd1cc9bea7d45978bcc3f24bda631a36910110a6ec06da35f8966c9279d130347594f13e9e07514fa370754d1424c0a1545c5070ef9fb2acd14233e8a50bfc5978b5bdf8bc1714731f798d21e2004117c61f2989dd44f0cf027b27d4019e81ed4b5c31db347c4a3a4d85048d7093cf16753d7b0d15e078f5c7a5205dc2f87e330a1f716738dce1c6180e9d02869b5546f1c4d2748f8c90d9693cba4e0079297d22fd61402dea32ff0eb69ebd65a5d0b687d87e3a8b2c42b648aa723c7c7daf37abcc4bb85caea2ee8f55bec20e913b3324ab8f5c3304f820d42ad1b9f2ffc1a3af9927136b4419e1e579ab4c2ae3c776d293d397d575df181e6cae0a4ada5d67ecea171cca3288d57c7bbdaee3befe745fb7d634f70386d873b90c4d6c6596bb65af68f9e5121e67ebf0d89d3c909ceedfb32ce9575a7758ff080724e1ab5d5f43074ecb53a479af21ed03d7b6899c36631c0166f9d47e5e1d4528a5d3d3f744029c4b1c190cbfbad06f5f83f7ad0429fa9a2719c56ffe3783460e166de2d8>
+  - name: 馃彸锔� AWG 1.5 (2 袙邪褉懈邪薪褌)
+    type: wireguard
+    server: 162.159.192.1
+    port: 4500
+    ip: 172.16.0.2
+    private-key: 'QKkyVBzSZNccOAaQF/h+SCrGWau1HMaWuxE43uvozmU='
+    public-key: 'bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo='
+    allowed-ips:
+      - 0.0.0.0/0
+    udp: true
+    mtu: 1280
+    remote-dns-resolve: true
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+      - 2606:4700:4700::1111
+      - 2606:4700:4700::1001
+    amnezia-wg-option:
+      jc: 120
+      jmin: 23
+      jmax: 911
+      s1: 0
+      s2: 0
+      h1: 1
+      h2: 2
+      h4: 3
+      h3: 4
+      i1: <b 0xc7000000010809a1ed4edbbe7615000044d017a61a0d774f04290f119e701ef0035df2b0ed571b0b575e6a07246b856eb6ec036fef07f1e07b861251ad737abeb67e64be714c1dcd865312b1b6c35c089c997aeb5c18f808696fe97289513945d84ca846467603e94e44224877f2c1d3261e4ac18740be4bd064369c94fc08978d99b54bf615250998639010c1284248e1d73004b81fcb20b559d8a17eced7eab3964b5b88ca7a3b8579fc8c1c934189e77143b4ac434138114b1048651b56545b87acbef0952763538f3ddeb37cfc6d58b4881c3b719d7ff78f6ee1324a2914a32381c05a64c700466d280be007253bb030d179c4f1b3dc221e1974e2ee6d6e2b9e8d709159b5ef22e1783dbba845c20ca1c83b066c73835920ad70b806df0aee0351e3fc9ab1e42e8b2a30fe235ff0612eee19744949cecee0463b76514ad90c1f7ceaa557c18586ab561d49482e73c85d0143785da14a441bf82f78783b61cccd44aecb1947516e79b5ca5a6b3a8aed6040fae0eeabdc55a88dc19ade832d99fca90c7a629cacc07192d7e47e3c6a271b95b0ea3392562a06a1cab79f40ea92916ebee197b7b5f14b251824e1ed20ff2ca80b1f03a43e45157589bc61b978e97851025b3b7ccc17d291e1cb60fe48a5c26829dce11dd23c2e73265a9ebf8617c985e4fee4681e863f990061f4dea465a7d2524bd0edcf4b48d4b8f25fc359b15babd2637284a4774077dca60091f1a781cfee1bef9713dd5943a579d7470bc5970542fbb27fdf77880a8d8751b1f642c7a3f019a05ab94bf63d3525ef34e9290b5c8d477f2714e6d6e3e4d35c1983f5e16fda57fcdf071b513f8f088dbe8d5a97577d17a5383a496c3f313adfdd47c962bbaebd6aa13b46439eb742622c29ca067db0ec1853064c3cbbffe0a215a19fce47d49703ed58ebbd89721172d256d1cf30188106fb2f863186511401fad54d087aa2fb3d1b85768db386bd7102e8060ac157bac011acdcdae2799b9aee1467c3424013455bd028fcaacdc3c77d28ea199967d617ea7d0d0815f3cc407934a76d1293dccba210d1709a13e5dd67c9ba47cd113f5bdd740358eff13164159fd09bc2f7ec6cfa64d9df7e2e2f88706b0ff3a92ccf6f078456cfe0bdd89292cfe2680badc1eac9f7d36efe8eb6912c7b164508d13e6c0911c15f73c233cbe4fc70ff2ade1e1be4bbb738e0939159e2078a9438f05b756a003371f4861481c38f1cdd2d7b06deb62869e9fe79a8abaa920646fa2e8fa28f0d80c136376c7b56046bae4c05c0cdf64efb8c47bbfc5a1a4c0b045061ef0d71618e0d206a1d7f245fd5c03191b152673ba8dff8e1b8de7c50234a93cba91e3888adb228cc02beded4b1c0946797d3ef02dec2edb6ad0ac21f89f4be364c317da7c22440e9f358d512203f4b7ab20388af68b8915d0152db2c8a0687bfaea870f7529bb92a22b35bd79bc6d490591406346ecd78342ee3563c4883a8251679691c2d4e963397e24653520795511b018915374c954bddb940a9d7a16d1c8bd798fc7dbfb0599a7074e13f87e14efa8d511bb2579ec029b1bda18fe971b30fbe19e986ff2686a69bf3f1bb929de93ae70345ebca998b11e0a2b41890cba628d8f6e7c4e94790735e5299b4ff07cd3080f7d53c9cbe1911d2cd5925b3213e033c272506a87886cf761a283a779564d3241e3c28f632e166b5d756e1786ce077614c4444e3f2aed5decb3613b925ea3e558c21d4faf8ba54edd0f3a5d4>
+  - name: 馃彸锔� AWG 1.5 (3 袙邪褉懈邪薪褌)
+    type: wireguard
+    server: 162.159.192.1
+    port: 4500
+    ip: 172.16.0.2
+    private-key: 'QKkyVBzSZNccOAaQF/h+SCrGWau1HMaWuxE43uvozmU='
+    public-key: 'bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo='
+    allowed-ips:
+      - 0.0.0.0/0
+    udp: true
+    mtu: 1280
+    remote-dns-resolve: true
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+      - 2606:4700:4700::1111
+      - 2606:4700:4700::1001
+    amnezia-wg-option:
+      jc: 120
+      jmin: 23
+      jmax: 911
+      s1: 0
+      s2: 0
+      h1: 1
+      h2: 2
+      h4: 3
+      h3: 4
+      i1: <b 0x494e56495445207369703a626f624062696c6f78692e636f6d205349502f322e300d0a5669613a205349502f322e302f55445020706333332e61746c616e74612e636f6d3b6272616e63683d7a39684734624b3737366173646864730d0a4d61782d466f7277617264733a2037300d0a546f3a20426f62203c7369703a626f624062696c6f78692e636f6d3e0d0a46726f6d3a20416c696365203c7369703a616c6963654061746c616e74612e636f6d3e3b7461673d313932383330313737340d0a43616c6c2d49443a20613834623463373665363637313040706333332e61746c616e74612e636f6d0d0a435365713a2033313431353920494e564954450d0a436f6e746163743a203c7369703a616c69636540706333332e61746c616e74612e636f6d3e0d0a436f6e74656e742d547970653a206170706c69636174696f6e2f7364700d0a436f6e74656e742d4c656e6774683a20300d0a0d0a>
+      i2: <b 0x5349502f322e302031303020547279696e670d0a5669613a205349502f322e302f55445020706333332e61746c616e74612e636f6d3b6272616e63683d7a39684734624b3737366173646864730d0a546f3a20426f62203c7369703a626f624062696c6f78692e636f6d3e0d0a46726f6d3a20416c696365203c7369703a616c6963654061746c616e74612e636f6d3e3b7461673d313932383330313737340d0a43616c6c2d49443a20613834623463373665363637313040706333332e61746c616e74612e636f6d0d0a435365713a2033313431353920494e564954450d0a436f6e74656e742d4c656e6774683a20300d0a0d0a>
+      j1: <b 0xabcdef1234567890>
+      itime: 120
+
 proxy-groups:
-- name: WARP
-  type: select
-  icon: https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg
-  proxies:
-    - "AWG 1.5 (1 Вариант)"
-    - "AWG 1.5 (2 Вариант)"
-    - "AWG 1.5 (3 Вариант)"
-  url: 'http://speed.cloudflare.com/'
-  interval: 300
+  - name: "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+    icon: https://www.svgrepo.com/show/412721/choose.svg
+    type: select
+    proxies:
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "賯胤毓 丕蹖賳鬲乇賳鬲 鉀�"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: "丿爻鬲蹖 馃馃徎"
+    type: select
+    icon: https://www.svgrepo.com/show/372331/cursor-hand-click.svg
+    proxies:
+      - "馃彸锔� AWG 1.5 (1 袙邪褉懈邪薪褌)"
+      - "馃彸锔� AWG 1.5 (2 袙邪褉懈邪薪褌)"
+      - "馃彸锔� AWG 1.5 (3 袙邪褉懈邪薪褌)"
+  - name: "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+    type: url-test
+    icon: https://www.svgrepo.com/show/7876/speedometer.svg
+    url: https://api.v2fly.org/checkConnection.svgz
+    interval: 300
+    timeout: 5000
+    tolerance: 50
+    max-failed-times: 3
+    lazy: true
+    proxies:
+      - "馃彸锔� AWG 1.5 (1 袙邪褉懈邪薪褌)"
+      - "馃彸锔� AWG 1.5 (2 袙邪褉懈邪薪褌)"
+      - "馃彸锔� AWG 1.5 (3 袙邪褉懈邪薪褌)"
+  - name: 丿丕賳賱賵丿 賲賳蹖噩乇 馃摜
+    type: select
+    icon: https://www.sadeemrdp.com/fonts/apps/IDM-Logo.svg
+    proxies:
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 鬲賱诏乇丕賲 馃挰
+    type: select
+    icon: https://www.svgrepo.com/show/354443/telegram.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 蹖賵鬲蹖賵亘 鈻讹笍
+    type: select
+    icon: https://www.svgrepo.com/show/475700/youtube-color.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: 诏賵诏賱 馃實
+    type: select
+    icon: https://www.svgrepo.com/show/475656/google-color.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 賵丕鬲爻 丌倬 馃煝
+    type: select
+    icon: https://upload.wikimedia.org/wikipedia/commons/4/4c/WhatsApp_Logo_green.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: 賴賵卮 賲氐賳賵毓蹖 馃
+    type: select
+    icon: https://www.svgrepo.com/show/306500/openai.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 鬲賵蹖蹖鬲乇 馃惁
+    type: select
+    icon: https://www.svgrepo.com/show/475689/twitter-color.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: 丕爻倬丕鬲蹖賮丕蹖 馃幍
+    type: select
+    icon: https://www.svgrepo.com/show/475684/spotify-color.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: 丕蹖賳爻鬲丕诏乇丕賲 馃摳
+    type: select
+    icon: https://www.svgrepo.com/show/452229/instagram-1.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: 鬲亘賱蹖睾丕鬲 馃啂
+    type: select
+    icon: https://www.svgrepo.com/show/336358/ad.svg
+    proxies:
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: 鬲亘賱蹖睾丕鬲 丕倬 賴丕 馃崈
+    type: select
+    icon: https://www.svgrepo.com/show/12172/smartphone-ad.svg
+    proxies:
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: 乇賴诏蹖乇蹖 噩賴丕賳蹖 馃洃
+    type: select
+    icon: https://www.svgrepo.com/show/298725/tracking-track.svg
+    proxies:
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: 爻丕蹖鬲丕蹖 賲禺乇亘 鈿狅笍
+    type: select
+    icon: https://www.svgrepo.com/show/381135/cyber-crime-cyber-phishing-fraud-hack-money.svg
+    proxies:
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: 丕爻鬲蹖賲 馃枼锔�
+    type: select
+    icon: https://www.svgrepo.com/show/452107/steam.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 诏蹖賲 馃幃
+    type: select
+    icon: https://www.svgrepo.com/show/167729/game-controller.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 鬲賵蹖蹖趩 馃摗
+    type: select
+    icon: https://www.svgrepo.com/show/343527/twitch-network-communication-interaction-connection.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+    type: select
+    icon: https://upload.wikimedia.org/wikipedia/commons/3/36/Flag_of_Iran_%28civil%29.svg
+    proxies:
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 賵蹖賳丿賵夭 馃
+    type: select
+    icon: https://icon.icepanel.io/Technology/svg/Windows-11.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+  - name: 讴賱賵丿賮賱乇 鈽侊笍
+    type: select
+    icon: https://icon.icepanel.io/Technology/svg/Cloudflare.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 诏蹖鬲賴丕亘 馃悪
+    type: select
+    icon: https://www.svgrepo.com/show/355033/github.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 丿蹖爻讴賵乇丿 馃棧锔�
+    type: select
+    icon: https://automatorplugin.com/wp-content/uploads/2024/10/discord-icon.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 丕爻鬲乇蹖賲蹖賵 馃幀
+    type: select
+    icon: https://stremio.github.io/stremio-addon-guide/img/stremio.svg
+    proxies:
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 丕賳蹖鈥屫弛� 馃敶
+    type: select 
+    icon: https://www.svgrepo.com/show/331289/anydesk.svg 
+    proxies: 
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+  - name: 爻丕蹖鬲丕蹖 爻丕賳爻賵乇蹖 馃が
+    type: select
+    icon: https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Censorship.svg/300px-Censorship.svg.png
+    proxies:
+      - "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+      - "賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢"
+      - "禺賵丿讴丕乇 (亘賴鬲乇蹖賳 倬蹖賳诏) 馃"
+      - "丿爻鬲蹖 馃馃徎"
+      - "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+  - name: "亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�"
+    type: select
+    icon: https://www.svgrepo.com/show/6318/connection.svg
+    proxies:
+      - DIRECT
+    hidden: true
+  - name: "賯胤毓 丕蹖賳鬲乇賳鬲 鉀�"
+    type: select
+    icon: https://www.svgrepo.com/show/305372/wifi-off.svg
+    proxies:
+      - REJECT
+    hidden: true
+  - name: "丕噩丕夭賴 賳丿丕丿賳 馃毇"
+    type: select
+    icon: https://www.svgrepo.com/show/444307/gui-ban.svg
+    proxies:
+      - REJECT
+    hidden: true
+
+rules:
+  - RULE-SET,DownloadManagers,丿丕賳賱賵丿 賲賳蹖噩乇 馃摜
+  - RULE-SET,Download,丿丕賳賱賵丿 賲賳蹖噩乇 馃摜
+  - RULE-SET,stremio,丕爻鬲乇蹖賲蹖賵 馃幀
+  - RULE-SET,BanProgramAD,鬲亘賱蹖睾丕鬲 丕倬 賴丕 馃崈
+  - RULE-SET,BanAD,乇賴诏蹖乇蹖 噩賴丕賳蹖 馃洃
+  - RULE-SET,PrivateTracker,乇賴诏蹖乇蹖 噩賴丕賳蹖 馃洃
+  - RULE-SET,category_public_tracker,乇賴诏蹖乇蹖 噩賴丕賳蹖 馃洃
+  - RULE-SET,malware,爻丕蹖鬲丕蹖 賲禺乇亘 鈿狅笍
+  - RULE-SET,phishing,爻丕蹖鬲丕蹖 賲禺乇亘 鈿狅笍
+  - RULE-SET,cryptominers,爻丕蹖鬲丕蹖 賲禺乇亘 鈿狅笍
+  - RULE-SET,warninglist,爻丕蹖鬲丕蹖 賲禺乇亘 鈿狅笍
+  - RULE-SET,Ponzi,爻丕蹖鬲丕蹖 賲禺乇亘 鈿狅笍
+  - RULE-SET,LiteAds,鬲亘賱蹖睾丕鬲 馃啂
+  - RULE-SET,iran_ads,鬲亘賱蹖睾丕鬲 馃啂
+  - RULE-SET,PersianBlocker,鬲亘賱蹖睾丕鬲 馃啂
+  - RULE-SET,ads,鬲亘賱蹖睾丕鬲 馃啂
+  - RULE-SET,BanEasyList,鬲亘賱蹖睾丕鬲 馃啂
+  - RULE-SET,twitch,鬲賵蹖蹖趩 馃摗
+  - PROCESS-NAME,Telegram.exe,鬲賱诏乇丕賲 馃挰
+  - PROCESS-NAME,org.telegram.messenger,鬲賱诏乇丕賲 馃挰
+  - PROCESS-NAME,org.telegram.messenger.web,鬲賱诏乇丕賲 馃挰
+  - RULE-SET,telegram,鬲賱诏乇丕賲 馃挰
+  - RULE-SET,YouTube,蹖賵鬲蹖賵亘 鈻讹笍
+  - RULE-SET,youtube,蹖賵鬲蹖賵亘 鈻讹笍
+  - RULE-SET,YouTubeMusic,蹖賵鬲蹖賵亘 鈻讹笍
+  - PROCESS-NAME,com.anydesk.anydeskandroid,丕賳蹖鈥屫弛� 馃敶
+  - PROCESS-NAME,AnyDesk.exe,丕賳蹖鈥屫弛� 馃敶
+  - DOMAIN-SUFFIX,anydesk.com,丕賳蹖鈥屫弛� 馃敶
+  - PROCESS-NAME,Twitter.exe,鬲賵蹖蹖鬲乇 馃惁
+  - PROCESS-NAME,com.twitter.android,鬲賵蹖蹖鬲乇 馃惁
+  - RULE-SET,Chotwitter,鬲賵蹖蹖鬲乇 馃惁
+  - RULE-SET,mihTwitter,鬲賵蹖蹖鬲乇 馃惁
+  - RULE-SET,Domtwitter,鬲賵蹖蹖鬲乇 馃惁
+  - PROCESS-NAME,com.spotify.music,丕爻倬丕鬲蹖賮丕蹖 馃幍
+  - PROCESS-NAME,Spotify.exe,丕爻倬丕鬲蹖賮丕蹖 馃幍
+  - RULE-SET,DomainSpotify,丕爻倬丕鬲蹖賮丕蹖 馃幍
+  - RULE-SET,mihspotify,丕爻倬丕鬲蹖賮丕蹖 馃幍
+  - PROCESS-NAME,com.instagram.android,丕蹖賳爻鬲丕诏乇丕賲 馃摳
+  - RULE-SET,instagram,丕蹖賳爻鬲丕诏乇丕賲 馃摳
+  - DOMAIN-SUFFIX,deepseek.com,賴賵卮 賲氐賳賵毓蹖 馃
+  - DOMAIN-SUFFIX,qwen.ai,賴賵卮 賲氐賳賵毓蹖 馃
+  - RULE-SET,category-ai,賴賵卮 賲氐賳賵毓蹖 馃
+  - RULE-SET,censor,爻丕蹖鬲丕蹖 爻丕賳爻賵乇蹖 馃が
+  - RULE-SET,apps,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,iran,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,arvancloud,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,derakcloud,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,iranserver,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,parspack,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,irasn,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,ircidr,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,ir,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,category_ir,爻丕蹖鬲丕蹖 丕蹖乇丕賳蹖 馃嚠馃嚪
+  - RULE-SET,whatsapp,賵丕鬲爻 丌倬 馃煝
+  - RULE-SET,steam,丕爻鬲蹖賲 馃枼锔�
+  - RULE-SET,SteamRegionCheck,丕爻鬲蹖賲 馃枼锔�
+  - RULE-SET,game,诏蹖賲 馃幃
+  - RULE-SET,GameDownload,诏蹖賲 馃幃
+  - RULE-SET,category-games,诏蹖賲 馃幃
+  - RULE-SET,Xbox,诏蹖賲 馃幃
+  - RULE-SET,discord,丿蹖爻讴賵乇丿 馃棧锔�
+  - RULE-SET,xiaomi_white_list,賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢
+  - RULE-SET,xiaomi-ads,鬲亘賱蹖睾丕鬲 丕倬 賴丕 馃崈
+  - RULE-SET,xiaomi_block_list,鬲亘賱蹖睾丕鬲 丕倬 賴丕 馃崈
+  - RULE-SET,windows,賵蹖賳丿賵夭 馃
+  - RULE-SET,cloudflare,讴賱賵丿賮賱乇 鈽侊笍
+  - RULE-SET,github,诏蹖鬲賴丕亘 馃悪
+  - PROCESS-NAME,com.android.vending,賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢
+  - PROCESS-NAME,com.google.android.gms,賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢
+  - RULE-SET,google-play,賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢
+  - RULE-SET,google,诏賵诏賱 馃實
+  - IP-CIDR,10.10.34.0/24,賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢
+  - RULE-SET,local_ips,亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�
+  - RULE-SET,private,亘丿賵賳 賮蹖賱鬲乇卮讴賳 馃洝锔�
+  - MATCH,賳賵毓 丕賳鬲禺丕亘 倬乇賵讴爻蹖 馃攢
+
+ntp:
+  enable: true
+  server: "time.apple.com"
+  port: 123
+  interval: 30
